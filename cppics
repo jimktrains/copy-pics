@@ -1,0 +1,18 @@
+#!/bin/sh
+dest=$1
+
+rsync_cmd="rsync -av --size-only"
+
+echo Pictures
+for i in *.JPG; do 
+  echo $i
+  created_date=`exiftool $i | grep "Create Date" | head -n 1 | sed 's/[^:]*:\s\+\(.*\) \(.*\)/\1/'`
+  date_as_folder=`echo $created_date | sed 's~:~/~g'`
+  folder=$dest/$date_as_folder
+  mkdir -p $folder
+  $rsync_cmd $i $folder/$i
+done
+
+echo Videos
+$rsync_cmd *.MOV $dest
+$rsync_cmd *.THM $dest
