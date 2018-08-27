@@ -1,0 +1,30 @@
+#!/bin/sh
+dest=$1
+
+
+copy_file_to_date_folder()
+{
+  rsync_cmd="rsync -a --size-only"
+  $i=$1
+
+  echo -n $i
+  created_date=`exiftool $i | grep "Create Date" | head -n 1 | sed 's/[^:]*:\s\+\(.*\) \(.*\)/\1/'`
+  date_as_folder=`echo $created_date | sed 's~:~/~g'`
+  folder=$dest/$date_as_folder
+  mkdir -p $folder
+  echo -n " > $folder/$i"
+  $rsync_cmd $i $folder/$i
+}
+
+echo Pictures
+for i in *.JPG; do 
+  copy_file_to_date_folder $i
+done
+
+echo Videos
+for i in *.MOV; do 
+  copy_file_to_date_folder $i
+done
+for i in *.THM; do 
+  copy_file_to_date_folder $i
+done
